@@ -21,33 +21,32 @@ class MainActivity : AppCompatActivity() {
         // Global scope live your CoRoutine until application die or after completion
         //task CoRoutine automatically remove from memory
 
-        GlobalScope.launch {
 
-            delay(3000) // delay() only make pause of current CoRoutine, not whole thread.
-            // Whereas sleep() method in Thread class make pause of whole thread. On
-            // Construction example, if one labour make delay() request then whole construction not
-            // going to cancel but if whole construction got cancel then whole work will stop.
-           println(doNetworkOperation())
-           println(doNetworkOperation2())
-            Log.e(TAG,"Hello from CoRoutine within the thread ${Thread.currentThread().name}")
+        //Jobs, Waiting, Cancelation
+        val job = GlobalScope.launch {
 
+            Log.e(TAG, "Before long running calculation...")
+
+            for (i in 50..60){
+                if(isActive) { //Is Active
+                    Log.e(TAG, "Result for i = $i is ${fib(i)}")
+                }
+            }
+            Log.e(TAG, "After long running calculation...")
 
         }
 
+        runBlocking {
+
+            delay(2000)
+            job.cancel() // Cancellation need cooperation, if coroutine doing his job continiously
+            // without pausing, then cancellation will not work, for this we can check active
+            // status of coroutine using isActive property
+            Log.e(TAG, "Job finished, current start running again...")
+        }
+        Log.e(TAG, "Hello from thread ${Thread.currentThread().name}")
 
 
-    }
-
-    private suspend fun doNetworkOperation(): String {
-
-        delay(3000)
-        return "l"
-    }
-
-    private suspend fun doNetworkOperation2(): String {
-
-        delay(3000)
-        return "m"
     }
 
     fun fib(n: Int): Long {
