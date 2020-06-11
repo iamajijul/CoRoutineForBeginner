@@ -25,35 +25,24 @@ class MainActivity : AppCompatActivity() {
         //Jobs, Waiting, Cancelation
         val job = GlobalScope.launch {
 
-//            repeat(5) { // Cancellation will work properly because we have pause in each iteration,
-//                          // CoRoutine will get enough time to cancel the job.
-//                Log.e(TAG, "CoRounting under progress...")
-//                delay(3000)
-//            }
-            Log.e(TAG, "Before long running calculation...")
-
-            for (i in 50..60){
-                if(isActive) { //Is Active
-                    Log.e(TAG, "Result for i = $i is ${fib(i)}")
-                }
+            repeat(5) { // Cancellation will work properly because we have pause in each iteration,
+                          // CoRoutine will get enough time to cancel the job.
+                Log.e(TAG, "CoRounting under progress...")
+                delay(3000)
             }
-            Log.e(TAG, "After long running calculation...")
 
         }
 
         runBlocking {
-            //job.join() // join(): Its block the current thread until the particular job
+            job.join() // join(): Its block the current thread until the particular job
             // coroutine got finish
-
-            delay(2000)
-            job.cancel() // Cancellation need cooperation, if coroutine doing his job continiously
-            // without pausing
             Log.e(TAG, "Job finished, current start running again...")
         }
         Log.e(TAG, "Hello from thread ${Thread.currentThread().name}")
 
 
     }
+
 
     fun fib(n: Int): Long {
         return if (n == 0) 0
