@@ -26,24 +26,30 @@ class MainActivity : AppCompatActivity() {
         val job = GlobalScope.launch {
 
             Log.e(TAG, "Before long running calculation...")
+            withTimeout(1000L) {//withTimeout() cancel job automatically without
+                // calling cancel() method, this required when we need to cancel
+                // some  network operation after certain period of time
 
-            for (i in 50..60){
-                if(isActive) { //Is Active
-                    Log.e(TAG, "Result for i = $i is ${fib(i)}")
+                for (i in 30..40) {
+                    if (isActive) { //Is Active
+                        Log.e(TAG, "Result for i = $i is ${fib(i)}")
+                    }
                 }
             }
+
             Log.e(TAG, "After long running calculation...")
 
         }
 
-        runBlocking {
-
-            delay(2000)
-            job.cancel() // Cancellation need cooperation, if coroutine doing his job continiously
-            // without pausing, then cancellation will not work, for this we can check active
-            // status of coroutine using isActive property
-            Log.e(TAG, "Job finished, current start running again...")
-        }
+        /*Now no need below lines because we are now using withTimeOut method*/
+//        runBlocking {
+//
+//            delay(2000)
+//            job.cancel() // Cancellation need cooperation, if coroutine doing his job continiously
+//            // without pausing, then cancellation will not work, for this we can check active
+//            // status of coroutine using isActive property
+//            Log.e(TAG, "Job finished, current start running again...")
+//        }
         Log.e(TAG, "Hello from thread ${Thread.currentThread().name}")
 
 
